@@ -6,9 +6,9 @@ from compressed_trie import Trie
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
     t = Trie()
-    t.create('ABAABAB')
-
+    t.create('ABAABABAABA')
     print(t.children)
+    print(t.output)
 
 def compress(text):
     index = 0

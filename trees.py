@@ -67,4 +67,4 @@
     {'AA': {'indexes': [1, 3], 'children': {}}, 
     'BA': {'indexes': [2, 4], 'children': 
         {'B': {'indexes': [6], 'children': {}}, 
-        'A': {'indexes': [5], '
+        'A': {'indexes': [5], 'children': {}}}}}}}
