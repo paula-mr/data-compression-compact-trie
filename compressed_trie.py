@@ -58,5 +58,6 @@ class Trie:
                         dictionary[key[0:i]] = {'indexes':new_indexes, 'children':new_children}
                         return new_indexes[-1], True
                     i = i - 1
+        #insert prefix if it doesn't exist
         dictionary[word] = {'indexes':[index], 'children':{}}
         return node['indexes'][-1], True
