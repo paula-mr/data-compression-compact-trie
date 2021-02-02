@@ -5,30 +5,31 @@ from compressed_trie import Trie
 
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
-    t = Trie()
-    t.create('ABAABABAABA')
-    print(t.root)
-    print(t.output)
+    
+    compressed = compress('ABAABABAABA')
+    decompressed = decompress(compressed)
+    print(decompressed)
 
 def compress(text):
-    index = 0
-    dictionary = {'': {'index': [index], 'children': {}}}
-    encoded_text = []
-
-def insert(character, index, dictionary):
-    for key in dictionary:
-        pass
-
-def lookup(word, dictionary):
-    for key in dictionary:
-        if word == key:
-            return dictionary[key]
-        if word.startswith(key):
-            return lookup(word, dictionary[key][1])
-    return None
+    t = Trie()
+    t.create(text)
+    return t.output
 
 def decompress(encoded_text):
-    pass
+    result = ''
+    dictionary = {0: ''}
+    index = 1
+
+    for i in range(0, len(encoded_text), 2):
+        a = int(encoded_text[i])
+        result = result + dictionary[a]
+        if i+1 < len(encoded_text):
+            b = encoded_text[i+1]
+            result = result + b
+            dictionary[index] = dictionary[a] + b
+            index = index + 1
+
+    return result
 
 def get_startup_arguments(argv):
     operation = None
