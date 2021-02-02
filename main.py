@@ -23,14 +23,22 @@ def compress(input_file, output_file):
         file_name = input_file.replace('.txt', '.z78')
 
     with open(file_name, 'wb') as file:
-        encoded_compressed_text = compressed_result.encode('utf-8')
-        file.write(encoded_compressed_text)
+        file.write(compressed_result)
 
 def decompress(input_file, output_file):
-    decompressed = ''
+    encoded_decompressed_text = ''
     with open(input_file, 'rb') as file:
-        encoded_decompressed_text = file.read().decode('utf-8')
-        decompressed = __decompress_text(encoded_decompressed_text)
+        byte = file.read(8)
+        while byte:
+            key = int.from_bytes(byte, "big")
+            encoded_decompressed_text = encoded_decompressed_text + str(key).zfill(8)
+            byte = file.read(8)
+            if byte:
+                decoded = byte.decode('utf-32')
+                encoded_decompressed_text = encoded_decompressed_text + decoded
+                byte = file.read(8)
+    
+    decompressed = __decompress_text(encoded_decompressed_text)
     
     if output_file:
         file_name = output_file
@@ -46,14 +54,14 @@ def __decompress_text(encoded_text):
     dictionary = {0: ''}
     index = 1
 
-    for i in range(0, len(encoded_text), 5):
+    for i in range(0, len(encoded_text), 9):
         #concatenar resultado já computado
-        a = int(encoded_text[i:i+4])
+        a = int(encoded_text[i:i+8])
         result = result + dictionary[a]
 
         #se houver character compactado, adicioná-lo ao resultado e ao dictionary
-        if i+4 < len(encoded_text):
-            b = encoded_text[i+4]
+        if i+8 < len(encoded_text):
+            b = encoded_text[i+8]
             result = result + b
             dictionary[index] = dictionary[a] + b
             index = index + 1

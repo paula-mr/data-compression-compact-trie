@@ -6,7 +6,7 @@ class Trie:
     def __init__(self):
         self.index = 1
         self.root = {'': {'indexes':[0], 'children':{}}}
-        self.output = ''
+        self.output = bytearray(0)
 
     def create(self, text):
         word = ""
@@ -79,5 +79,7 @@ class Trie:
     def __create_node(self, indexes, children):
         return {'indexes': indexes, 'children': children}
 
-    def __format_output(self, father_node, c = ''):
-        self.output = self.output + str(father_node).zfill(4) + c
+    def __format_output(self, number, c = ''):
+        encoded_number = number.to_bytes(length=8, byteorder='big')
+        encoded_char = c.encode('utf-32')
+        self.output = b''.join([self.output, encoded_number, encoded_char])
