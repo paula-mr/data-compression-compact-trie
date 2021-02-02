@@ -21,8 +21,11 @@ def decompress(encoded_text):
     index = 1
 
     for i in range(0, len(encoded_text), 2):
+        #concatenar resultado já computado
         a = int(encoded_text[i])
         result = result + dictionary[a]
+
+        #se houver character compactado, adicioná-lo ao resultado e ao dictionary
         if i+1 < len(encoded_text):
             b = encoded_text[i+1]
             result = result + b
