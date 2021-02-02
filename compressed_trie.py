@@ -21,9 +21,9 @@ class Trie:
             else:
                 word = ""
                 index = index + 1
-                self.output = self.output + str(father_node) + c
+                self.__format_output(father_node, c)
         if not inserted: #if last isn't inserted, only add the index to the output
-            self.output = self.output + str(father_node)
+            self.__format_output(father_node)
 
     def __insert(self, word, index, node):
         dictionary = node['children']
@@ -78,3 +78,6 @@ class Trie:
 
     def __create_node(self, indexes, children):
         return {'indexes': indexes, 'children': children}
+
+    def __format_output(self, father_node, c = ''):
+        self.output = self.output + str(father_node).zfill(4) + c
