@@ -6,7 +6,7 @@ from compressed_trie import Trie
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
     
-    compressed = compress('ABAABABAABA')
+    compressed = compress('ABAABABAABAB')
     decompressed = decompress(compressed)
     print(decompressed)
 

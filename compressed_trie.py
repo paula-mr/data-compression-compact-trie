@@ -15,9 +15,9 @@ class Trie:
         father_node = None
         for c in text:
             aux = word + c
-            father_node, inserted = self.insert(aux, index, self.root[''])
+            father_node, inserted = self.__insert(aux, index, self.root[''])
             if not inserted:
-                word = aux
+                word = aux #continue processing until a new segment is inserted
             else:
                 word = ""
                 index = index + 1
@@ -25,14 +25,14 @@ class Trie:
         if not inserted: #if last isn't inserted, only add the index to the output
             self.output = self.output + str(father_node)
 
-    def insert(self, word, index, node):
+    def __insert(self, word, index, node):
         dictionary = node['children']
         for key in dictionary:
             if word == key: #if the word is already included, return index
                 return dictionary[key]['indexes'][-1], False
             elif word.startswith(key):
                 if dictionary[key]['children']: #if there are children, insert key as a child
-                    return self.insert(word[len(key):len(word)], index, dictionary[key])
+                    return self.__insert(word[len(key):len(word)], index, dictionary[key])
                 else: #if there aren't children, compact node
                     indexes = dictionary[key]['indexes']
                     last_index = indexes[-1]
@@ -47,17 +47,34 @@ class Trie:
                         new_indexes = dictionary[key]['indexes'][0:i]
                         return new_indexes[-1], False
                     if word.startswith(key[0:i]): #if the word starts with a partial key, break the node
-                        #create broken node
+                        #remove original node
                         children = dictionary[key]['children']
                         indexes = dictionary[key]['indexes']
-                        broken_node = {'indexes':indexes[i:len(key)], 'children':children}
                         dictionary.pop(key)
-                        #get new values for father node
-                        new_children = {word[i:len(word)]: {'indexes':[index], 'children':{}}, key[i:len(key)]: broken_node}
-                        new_indexes = indexes[0:i]
-                        dictionary[key[0:i]] = {'indexes':new_indexes, 'children':new_children}
-                        return new_indexes[-1], True
+                        
+                        #create node for original sufix
+                        original_sufix = key[i:len(key)]
+                        original_sufix_indexes = indexes[i:len(key)]
+                        original_sufix_node = self.__create_node(original_sufix_indexes, children)
+
+                        #create node for new sufix
+                        new_sufix = word[i:len(word)]
+                        new_sufix_node = self.__create_node([index], {})
+
+                        #create new prefix node
+                        prefix = key[0:i]
+                        prefix_indexes = indexes[0:i]
+                        new_children = {new_sufix: new_sufix_node, original_sufix: original_sufix_node}
+                        dictionary[prefix] = self.__create_node(prefix_indexes, new_children)
+
+                        #return prefix index
+                        return prefix_indexes[-1], True
+                    # decrement i
                     i = i - 1
+
         #insert prefix if it doesn't exist
         dictionary[word] = {'indexes':[index], 'children':{}}
         return node['indexes'][-1], True
+
+    def __create_node(self, indexes, children):
+        return {'indexes': indexes, 'children': children}
