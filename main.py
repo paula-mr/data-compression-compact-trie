@@ -3,9 +3,9 @@ import os
 
 from compressed_trie import Trie
 
-ENCODING = 'utf-32'
-KEY_SIZE = 8
-CHAR_SIZE = 8
+ENCODING = 'utf-16'
+KEY_SIZE = 3
+CHAR_SIZE = 4
 
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
@@ -35,7 +35,7 @@ def decompress(input_file, output_file):
         byte = file.read(KEY_SIZE)
         while byte:
             key = int.from_bytes(byte, "big")
-            encoded_decompressed_text = encoded_decompressed_text + str(key).zfill(KEY_SIZE)
+            encoded_decompressed_text = encoded_decompressed_text + str(key).zfill(10)
             byte = file.read(CHAR_SIZE)
             if byte:
                 decoded = byte.decode(ENCODING)
@@ -58,14 +58,14 @@ def __decompress_text(encoded_text):
     dictionary = {0: ''}
     index = 1
 
-    for i in range(0, len(encoded_text), KEY_SIZE+1):
+    for i in range(0, len(encoded_text), 11):
         #concat computed result
-        key = int(encoded_text[i:i+KEY_SIZE])
+        key = int(encoded_text[i:i+10])
         result = result + dictionary[key]
 
         #if there's a new char, add it to the dict and to the result
-        if i+KEY_SIZE < len(encoded_text):
-            char = encoded_text[i+KEY_SIZE]
+        if i+10 < len(encoded_text):
+            char = encoded_text[i+10]
             result = result + char
             dictionary[index] = dictionary[key] + char
             index = index + 1
