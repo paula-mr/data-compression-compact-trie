@@ -3,9 +3,9 @@ import os
 
 from compressed_trie import Trie
 
-ENCODING = 'utf-16'
+ENCODING = 'utf-8'
 KEY_SIZE = 3
-CHAR_SIZE = 4
+CHAR_SIZE = 2
 
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
@@ -30,26 +30,26 @@ def compress(input_file, output_file):
         file.write(compressed_result)
 
 def decompress(input_file, output_file):
-    encoded_decompressed_text = ''
+    encoded_compressed_text = ''
     with open(input_file, 'rb') as file:
         byte = file.read(KEY_SIZE)
         while byte:
             key = int.from_bytes(byte, "big")
-            encoded_decompressed_text = encoded_decompressed_text + str(key).zfill(10)
+            encoded_compressed_text = encoded_compressed_text + str(key).zfill(10)
             byte = file.read(CHAR_SIZE)
             if byte:
                 decoded = byte.decode(ENCODING)
-                encoded_decompressed_text = encoded_decompressed_text + decoded
+                encoded_compressed_text = encoded_compressed_text + decoded.zfill(CHAR_SIZE)
                 byte = file.read(KEY_SIZE)
     
-    decompressed = __decompress_text(encoded_decompressed_text)
+    decompressed = __decompress_text(encoded_compressed_text)
     
     if output_file:
         file_name = output_file
     else:
         file_name = input_file.replace('.z78', '.txt')
 
-    with open(file_name, 'w') as file:
+    with open(file_name, 'w', encoding=ENCODING) as file:
         file.write(decompressed)
     
 
@@ -58,14 +58,14 @@ def __decompress_text(encoded_text):
     dictionary = {0: ''}
     index = 1
 
-    for i in range(0, len(encoded_text), 11):
+    for i in range(0, len(encoded_text), 10 + CHAR_SIZE):
         #concat computed result
         key = int(encoded_text[i:i+10])
         result = result + dictionary[key]
 
         #if there's a new char, add it to the dict and to the result
         if i+10 < len(encoded_text):
-            char = encoded_text[i+10]
+            char = str(encoded_text[i+10:i+10+CHAR_SIZE])
             result = result + char
             dictionary[index] = dictionary[key] + char
             index = index + 1

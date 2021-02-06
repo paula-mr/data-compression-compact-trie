@@ -1,3 +1,5 @@
+import os
+
 class Trie:
     index: 1
     children: {}
@@ -86,4 +88,9 @@ class Trie:
     def __format_output(self, number, c = ''):
         encoded_number = number.to_bytes(length=self.key_size, byteorder='big')
         encoded_char = c.encode(self.encoding)
+        if encoded_char and len(encoded_char) == 1:
+            encoded_char = b''.join([bytearray(1), encoded_char])
+        elif encoded_char and len(encoded_char) > 2:
+            print("Encoding ", c, " not supported")
+            os._exit(1)
         self.output = b''.join([self.output, encoded_number, encoded_char])
