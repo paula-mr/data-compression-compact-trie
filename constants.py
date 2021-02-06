@@ -1,0 +1,4 @@
+ENCODING = 'utf-8'
+KEY_SIZE = 3
+CHAR_SIZE = 2
+MAX_INT_SIZE = 10
