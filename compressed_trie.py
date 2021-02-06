@@ -2,11 +2,15 @@ class Trie:
     index: 1
     children: {}
     output: []
+    encoding: ''
+    key_size: 0
 
-    def __init__(self):
+    def __init__(self, encoding, key_size):
         self.index = 1
         self.root = {'': {'indexes':[0], 'children':{}}}
         self.output = bytearray(0)
+        self.encoding = encoding
+        self.key_size = key_size
 
     def create(self, text):
         word = ""
@@ -80,6 +84,6 @@ class Trie:
         return {'indexes': indexes, 'children': children}
 
     def __format_output(self, number, c = ''):
-        encoded_number = number.to_bytes(length=8, byteorder='big')
-        encoded_char = c.encode('utf-32')
+        encoded_number = number.to_bytes(length=self.key_size, byteorder='big')
+        encoded_char = c.encode(self.encoding)
         self.output = b''.join([self.output, encoded_number, encoded_char])

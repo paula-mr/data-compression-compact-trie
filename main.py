@@ -3,6 +3,10 @@ import os
 
 from compressed_trie import Trie
 
+ENCODING = 'utf-32'
+KEY_SIZE = 8
+CHAR_SIZE = 8
+
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
     
@@ -12,7 +16,7 @@ def main(argv):
         decompress(input_file, output_file)
 
 def compress(input_file, output_file):
-    t = Trie()
+    t = Trie(ENCODING, KEY_SIZE)
     with open(input_file, 'r') as file:
         t.create(file.read())
     
@@ -28,15 +32,15 @@ def compress(input_file, output_file):
 def decompress(input_file, output_file):
     encoded_decompressed_text = ''
     with open(input_file, 'rb') as file:
-        byte = file.read(8)
+        byte = file.read(KEY_SIZE)
         while byte:
             key = int.from_bytes(byte, "big")
-            encoded_decompressed_text = encoded_decompressed_text + str(key).zfill(8)
-            byte = file.read(8)
+            encoded_decompressed_text = encoded_decompressed_text + str(key).zfill(KEY_SIZE)
+            byte = file.read(CHAR_SIZE)
             if byte:
-                decoded = byte.decode('utf-32')
+                decoded = byte.decode(ENCODING)
                 encoded_decompressed_text = encoded_decompressed_text + decoded
-                byte = file.read(8)
+                byte = file.read(KEY_SIZE)
     
     decompressed = __decompress_text(encoded_decompressed_text)
     
@@ -54,16 +58,16 @@ def __decompress_text(encoded_text):
     dictionary = {0: ''}
     index = 1
 
-    for i in range(0, len(encoded_text), 9):
-        #concatenar resultado já computado
-        a = int(encoded_text[i:i+8])
-        result = result + dictionary[a]
+    for i in range(0, len(encoded_text), KEY_SIZE+1):
+        #concat computed result
+        key = int(encoded_text[i:i+KEY_SIZE])
+        result = result + dictionary[key]
 
-        #se houver character compactado, adicioná-lo ao resultado e ao dictionary
-        if i+8 < len(encoded_text):
-            b = encoded_text[i+8]
-            result = result + b
-            dictionary[index] = dictionary[a] + b
+        #if there's a new char, add it to the dict and to the result
+        if i+KEY_SIZE < len(encoded_text):
+            char = encoded_text[i+KEY_SIZE]
+            result = result + char
+            dictionary[index] = dictionary[key] + char
             index = index + 1
 
     return result
