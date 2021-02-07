@@ -35,10 +35,10 @@ class Trie:
 
     def __insert(self, word, index, node):
         dictionary = node['children']
+        if dictionary.get(word): #if the word is already included, return index
+            return dictionary[word]['indexes'][-1], False
         for key in dictionary:
-            if word == key: #if the word is already included, return index
-                return dictionary[key]['indexes'][-1], False
-            elif word.startswith(key):
+            if word.startswith(key):
                 if dictionary[key]['children']: #if there are children, insert key as a child
                     return self.__insert(word[len(key):len(word)], index, dictionary[key])
                 else: #if there aren't children, compact node
@@ -52,7 +52,6 @@ class Trie:
                     if word.startswith(key[0:i]): #if the word starts with a partial key, break the node
                         father_node = self.__break_node(dict, key, i, word)
                         return father_node, True
-                    # decrement i
                     i = i - 1
 
         #insert prefix if it doesn't exist
