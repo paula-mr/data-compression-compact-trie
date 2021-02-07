@@ -96,12 +96,16 @@ class Trie:
 
     def __format_output(self, number, c = ''):
         encoded_number = number.to_bytes(length=KEY_SIZE, byteorder='big')
-        encoded_char = c.encode(ENCODING)
+        encoded_char = self.__encode_char(c)
+        self.output = b''.join([self.output, encoded_number, encoded_char])
+
+    def __encode_char(self, char):
+        encoded_char = char.encode(ENCODING)
         #if encoded char is smaller than char size, add padding
         if encoded_char and len(encoded_char) < CHAR_SIZE:
             encoded_char = b''.join([bytearray(CHAR_SIZE - len(encoded_char)), encoded_char])
         #if encoded char is bigger than char size, return error
         elif encoded_char and len(encoded_char) > CHAR_SIZE:
-            print("Encoding ", c, " not supported")
+            print("Encoding ", char, " not supported")
             os._exit(1)
-        self.output = b''.join([self.output, encoded_number, encoded_char])
+        return encoded_char
