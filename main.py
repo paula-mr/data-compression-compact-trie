@@ -13,9 +13,17 @@ def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
     
     if operation == '-c':
-        compress(input_file, output_file)
+        if output_file:
+            file_name = output_file
+        else:
+            file_name = input_file.replace('.txt', '.z78')
+        compress(input_file, file_name)
     elif operation == '-x':
-        decompress(input_file, output_file)
+        if output_file:
+            file_name = output_file
+        else:
+            file_name = input_file.replace('.z78', '.txt')
+        decompress(input_file, file_name)
 
 def get_startup_arguments(argv):
     operation = None

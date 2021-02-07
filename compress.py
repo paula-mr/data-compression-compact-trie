@@ -7,12 +7,8 @@ def compress(input_file, output_file):
         t.create(file.read())
     
     compressed_result = t.output
-    if output_file:
-        file_name = output_file
-    else:
-        file_name = input_file.replace('.txt', '.z78')
 
-    with open(file_name, 'wb') as file:
+    with open(output_file, 'wb') as file:
         file.write(compressed_result)
 
 class Trie:

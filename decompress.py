@@ -14,13 +14,8 @@ def decompress(input_file, output_file):
                 byte = file.read(KEY_SIZE)
     
     decompressed = __decompress_text(encoded_compressed_text)
-    
-    if output_file:
-        file_name = output_file
-    else:
-        file_name = input_file.replace('.z78', '.txt')
 
-    with open(file_name, 'w', encoding=ENCODING) as file:
+    with open(output_file, 'w', encoding=ENCODING) as file:
         file.write(decompressed)
     
 
