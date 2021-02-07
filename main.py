@@ -4,11 +4,6 @@ import os
 from compress import compress
 from decompress import decompress
 
-ENCODING = 'utf-8'
-KEY_SIZE = 3
-CHAR_SIZE = 2
-MAX_INT_SIZE = 10
-
 def main(argv):
     operation, input_file, output_file = get_startup_arguments(argv)
     
