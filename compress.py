@@ -50,7 +50,7 @@ class Trie:
                     if word == key[0:i]: #if word is included in a key, return corresponding index
                         return dictionary[key]['indexes'][i], False
                     if word.startswith(key[0:i]): #if the word starts with a partial key, break the node
-                        father_node = self.__break_node(dict, key, i, word)
+                        father_node = self.__break_node(dictionary, key, i, word)
                         return father_node, True
                     i = i - 1
 
