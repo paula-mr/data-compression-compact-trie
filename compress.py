@@ -30,7 +30,7 @@ class Trie:
                 word = ""
                 self.index = self.index + 1
                 self.__format_output(father_node, c)
-        if not inserted: #if last isn't inserted, only add the index to the output
+        if not inserted and father_node: #if last isn't inserted, only add the index to the output
             self.__format_output(father_node)
 
     def __insert(self, word, node):
