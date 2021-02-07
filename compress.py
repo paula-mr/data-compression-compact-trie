@@ -23,7 +23,7 @@ class Trie:
         father_node = None
         for c in text:
             aux = word + c
-            father_node, inserted = self.__insert(aux, self.index, self.root[''])
+            father_node, inserted = self.__insert(aux, self.root[''])
             if not inserted:
                 word = aux #continue processing until a new segment is inserted
             else: #add tuple to output
@@ -33,35 +33,36 @@ class Trie:
         if not inserted: #if last isn't inserted, only add the index to the output
             self.__format_output(father_node)
 
-    def __insert(self, word, index, node):
+    def __insert(self, word, node):
         dictionary = node['children']
         if dictionary.get(word): #if the word is already included, return index
             return dictionary[word]['indexes'][-1], False
         for key in dictionary:
             if word.startswith(key):
                 if dictionary[key]['children']: #if there are children, insert key as a child
-                    return self.__insert(word[len(key):len(word)], index, dictionary[key])
+                    return self.__insert(word[len(key):len(word)], dictionary[key])
                 else: #if there aren't children, compact node
-                    father_node = self.__compact_node(dictionary, key, index, word)
+                    father_node = self.__compact_node(dictionary, key, word)
                     return father_node, True
             else: #check if should break any nodes
                 i = len(key) - 1
                 while i > 0:
                     if word == key[0:i]: #if word is included in a key, return corresponding index
-                        return dictionary[key]['indexes'][i], False
+                        new_indexes = dictionary[key]['indexes'][0:i]
+                        return new_indexes[-1], False
                     if word.startswith(key[0:i]): #if the word starts with a partial key, break the node
                         father_node = self.__break_node(dictionary, key, i, word)
                         return father_node, True
                     i = i - 1
 
         #insert prefix if it doesn't exist
-        dictionary[word] = {'indexes':[index], 'children':{}}
+        dictionary[word] = {'indexes':[self.index], 'children':{}}
         return node['indexes'][-1], True
 
-    def __compact_node(self, dictionary, key, index, word):
+    def __compact_node(self, dictionary, key, word):
         indexes = dictionary[key]['indexes']
         father_node = indexes[-1] #save father node
-        indexes.append(index)
+        indexes.append(self.index)
         dictionary.pop(key)
         dictionary[word] = {'indexes':indexes, 'children':{}}
         return father_node
@@ -79,7 +80,7 @@ class Trie:
 
         #create node for new sufix
         new_sufix = word[breaking_index:len(word)]
-        new_sufix_node = self.__create_node([breaking_index], {})
+        new_sufix_node = self.__create_node([self.index], {})
 
         #create new prefix node
         prefix = key[0:breaking_index]
